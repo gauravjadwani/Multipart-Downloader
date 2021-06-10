@@ -11,7 +11,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "combined-stream": "^1.0.8",
-    "multipart-download": "^1.2.4"
-  },
-  "type": "module"
+    "multipart-download": "^1.2.4",
+    "request-progress": "^3.0.0"
+  }
 }

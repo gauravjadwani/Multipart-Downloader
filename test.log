@@ -1,0 +1,18 @@
+progress {
+  time: { elapsed: 0.135, remaining: null },
+  speed: null,
+  percent: 9.375611348097143e-7,
+  size: { total: 2775285689, transferred: 2602 }
+}
+progress {
+  time: { elapsed: 1.135, remaining: 186585.126 },
+  speed: 14874.008810572686,
+  percent: 0.000006082977355056725,
+  size: { total: 2775285689, transferred: 16882 }
+}
+progress {
+  time: { elapsed: 2.135, remaining: 279939.042 },
+  speed: 9913.817330210773,
+  percent: 0.000007626602221130828,
+  size: { total: 2775285689, transferred: 21166 }
+}
