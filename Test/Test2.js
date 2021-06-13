@@ -45,7 +45,7 @@ const reportProgress = new Transform({
 const downloadFile = async (url) => {
   // Writer stream where we want to download the image
   var writeOpts = {highWaterMark:10000}
-  const writer = fs.createWriteStream("./bigclone1.mp4",writeOpts);
+  const writer = fs.createWriteStream("./textclone.txt",writeOpts);
   console.log("data comigjdwdwwd");
   const streamResponse = await axios({
     url,
@@ -53,38 +53,12 @@ const downloadFile = async (url) => {
     responseType: "stream",
   });
   let cal = 0;
-  streamResponse.data.pipe(writer);
-  streamResponse.data.on("data", (chunk) => {
-    console.log("length of chunk", chunk.length);
-    cal = cal + chunk.length;
-    console.log("total", cal);
-  });
 
-    // streamResponse.data.pipe(reportProgress)
-    streamResponse.data.on("data", (chunk) => {
-      console.log("length of chunk", chunk.length);
-      cal = cal + chunk.length;
-      console.log("total", cal);
-    });
-    let error = null;
-    writer.on("error", (err) => {
-      console.log("error", err);
-      error = err;
-      writer.close();
-      // reject(err);  
-    });
-    writer.on("drain", (err) => {
-      console.log("drain", err);
-      // resolve(true);
-    });
-    writer.on("close", () => {
-      console.log("close", error);
-      if (!error) {
-        //
-        // resolve(true);
-      }
-    });
-  // return new Promise((resolve, reject) => {
+  // streamResponse.data.on("data", (chunk) => {
+  //   console.log("length of chunk", chunk.length);
+  //   cal = cal + chunk.length;
+  //   console.log("total", cal);
+  // });
 
   //   // streamResponse.data.pipe(reportProgress)
   //   streamResponse.data.on("data", (chunk) => {
@@ -97,23 +71,49 @@ const downloadFile = async (url) => {
   //     console.log("error", err);
   //     error = err;
   //     writer.close();
-  //     reject(err);
+  //     // reject(err);  
   //   });
   //   writer.on("drain", (err) => {
   //     console.log("drain", err);
-  //     resolve(true);
+  //     // resolve(true);
   //   });
   //   writer.on("close", () => {
   //     console.log("close", error);
   //     if (!error) {
   //       //
-  //       resolve(true);
+  //       // resolve(true);
   //     }
   //   });
-  // });
+  return new Promise((resolve, reject) => {
+    streamResponse.data.pipe(writer);
+    // streamResponse.data.pipe(reportProgress)
+    streamResponse.data.on("data", (chunk) => {
+      console.log("length of chunk", chunk.length);
+      cal = cal + chunk.length;
+      console.log("total", cal);
+    });
+    let error = null;
+    writer.on("error", (err) => {
+      console.log("error", err);
+      error = err;
+      writer.close();
+      reject(err);
+    });
+    writer.on("drain", (err) => {
+      console.log("drain", err);
+      resolve(true);
+    });
+    writer.on("close", () => {
+      console.log("close", error);
+      if (!error) {
+        //
+        resolve(true);
+      }
+    });
+  });
 };
 const fileLink =
-  "http://103.222.20.150/ftpdata/Movies/Bollywood/2021/Black%20Rose%20%282021%29/Black%20Rose%20%282021%29%20Hindi%201080p%20SM.WEB-DL%20x264.mp4";
+  "http://13.233.81.70:8000";
 downloadFile(fileLink);
 
 

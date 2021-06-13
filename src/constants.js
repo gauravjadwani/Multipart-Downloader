@@ -7,7 +7,7 @@ function define(name, value) {
 }
 
 
-define("url", "http://103.222.20.150/ftpdata/Movies/Bollywood/2021/Black%20Rose%20%282021%29/Black%20Rose%20%282021%29%20Hindi%201080p%20SM.WEB-DL%20x264.mp4")
+define("url", "http://13.233.81.70:8000")
 
 define("status", {totalLength:0})
 define("dir", "./../temp/files")

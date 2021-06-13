@@ -12,10 +12,11 @@ const fs = require('fs');
 
 
 const server = require('http').createServer();
+let count = 0
 
 // // server.on('request', (req, res) => {
 // //     console.log("req ca,e")
-// //   fs.readFile('./big.file', (err, data) => {
+// //   fs.readFile('./big.f  ile', (err, data) => {
 // //     if (err) throw err;
   
 // //     res.end(data);
@@ -24,8 +25,10 @@ const server = require('http').createServer();
 
 
 server.on('request', (req, res) => {
-    console.log("req ca,e")
+    console.log("requst came.",count++)
     const src = fs.createReadStream('./big.file');
+    // res.header['X-custom-length'] = 102111
+    res.setHeader('X-custom-length', '139586437')
     src.pipe(res);
   });
 

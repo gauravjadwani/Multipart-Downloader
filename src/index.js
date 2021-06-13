@@ -23,71 +23,83 @@ async function main(url, status, dir) {
     // const workers = [...Array(numWorkers)].map(_ => cluster.fork())
 
   const res = await checkSupportPartial(url);
-  let length = parseInt(res["content-length"], 10);
-  // console.log("length is", length);
-  status['totalLength'] = length
-  if (isFinite(length)) {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-
-    const queue = makeProcess(length, 4);
-
-    console.log(`Forking ${numWorkers} workers`)
-    queue.map(function (range) {
-        constants.status[range] = {
-          status:"ongoing",
-          totalLength:0,
-          completedLength:0
-        };
-
-        const worker = cluster.fork();
-        const msg = {
-            url:url,
-            range:range,
-            status:constants.status
-        }
-        
-        worker.send((msg));
-
-        workers.push(worker)
-        worker.on('message', function(msg) {
-            console.log('Incoming from worker')
-            console.log(msg)
+  console.log("length is",res);
+  const contentLength = res["content-length"]
+  if(contentLength){
+    let length = parseInt(res["content-length"], 10);
+    console.log("length is", length);
+    status['totalLength'] = length
+    if (isFinite(length)) {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      }
+  
+      const queue = makeProcess(length, 4);
+  
+      console.log(`Forking ${numWorkers} workers`)
+      queue.map(function (range) {
+          constants.status[range] = {
+            status:"ongoing",
+            totalLength:0,
+            completedLength:0
+          };
+  
+          const worker = cluster.fork();
+          const msg = {
+              url:url,
+              range:range,
+              status:constants.status
+          }
+          
+          worker.send((msg));
+  
+          workers.push(worker)
+          worker.on('message', function(msg) {
+              console.log('Incoming from worker')
+              console.log(msg)
+          });
+  
         });
-
-      });
-      cluster.on('exit', (worker, exitCode) => {
-        log(`Worker ${worker.process.id} exited with code ${exitCode}`)
-        log(`Starting a new worker`)
-        // cluster.fork()
-      })
-    // for(var i = 0; i < numWorkers; i++) {
-        
-    // }
-
-
-    // getting statusurlg(status);
-    console.time("Time this");
-    // making req
-    // const promiseArr = [];
-    // for (let i = 0; i < queue.length; i++) {
-    //   promiseArr[i] = getDataForRange(url, queue[i], status);
-    // }
-    // axios
-    //   .all(promiseArr)
-    //   .then(
-    //     axios.spread((...responses) => {
-    //       console.log("all settled");
-    //       //   clearInterval(intervalId);
-    //       concatStreams(responses);
-    //     })
-    //   )
-    //   .catch((errors) => {
-    //     console.log("all error", errors);
-    //     // react on errors.
-    //   });
+        cluster.on('exit', (worker, exitCode) => {
+          log(`Worker ${worker.process.id} exited with code ${exitCode}`)
+          log(`Starting a new worker`)
+          // cluster.fork()
+        })
+      // for(var i = 0; i < numWorkers; i++) {
+          
+      // }
+  
+  
+      // getting statusurlg(status);
+      console.time("Time this");
+      // making req
+      // const promiseArr = [];
+      // for (let i = 0; i < queue.length; i++) {
+      //   promiseArr[i] = getDataForRange(url, queue[i], status);
+      // }
+      // axios
+      //   .all(promiseArr)
+      //   .then(
+      //     axios.spread((...responses) => {
+      //       console.log("all settled");
+      //       //   clearInterval(intervalId);
+      //       concatStreams(responses);
+      //     })
+      //   )
+      //   .catch((errors) => {
+      //     console.log("all error", errors);
+      //     // react on errors.
+      //   });
+    }
+  }else{
+    console.log("else")
+    status['0-*'] = {}
+    const res = await getDataForRange(url, '0-*', status, process)
+    console.log('dadad',res)
+    const writer = fs.createWriteStream("./../temp/files/movie494.mp4")
+    res.data.pipe(writer)
   }
+
 }
 
 function concatStreams(streams) {
@@ -126,6 +138,7 @@ function concatStreams(streams) {
 
 if(isMaster){
     // main()
+    console.log("master",constants.url)
     main(constants.url, constants.status, constants.dir);
 }else{
     // workers
