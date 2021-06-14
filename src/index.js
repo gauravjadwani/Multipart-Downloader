@@ -19,14 +19,16 @@ const workers = []
 async function main(url, status, dir) {
 
 
-
+// X-custom-length
+// content-length
     // const workers = [...Array(numWorkers)].map(_ => cluster.fork())
 
   const res = await checkSupportPartial(url);
-  console.log("length is",res);
-  const contentLength = res["content-length"]
+  console.log('res',res)
+  const contentLength = res["x-custom-length"]
   if(contentLength){
-    let length = parseInt(res["content-length"], 10);
+    console.log('if exexuted')
+    let length = parseInt(res["x-custom-length"], 10);
     console.log("length is", length);
     status['totalLength'] = length
     if (isFinite(length)) {
@@ -37,7 +39,7 @@ async function main(url, status, dir) {
       const queue = makeProcess(length, 4);
   
       console.log(`Forking ${numWorkers} workers`)
-      queue.map(function (range) {
+      queue.map(function (range,index) {
           constants.status[range] = {
             status:"ongoing",
             totalLength:0,
@@ -48,7 +50,8 @@ async function main(url, status, dir) {
           const msg = {
               url:url,
               range:range,
-              status:constants.status
+              status:constants.status,
+              index:index
           }
           
           worker.send((msg));
@@ -143,10 +146,10 @@ if(isMaster){
 }else{
     // workers
     process.on('message', function(msg) {
-        console.log('fefefe',typeof msg)
-        const {range, url, status} = msg
+        // console.log('fefefe',typeof msg)
+        const {range, url, status, index} = msg
 
-        getDataForRange(url, range, status, process)
+        getDataForRange(url, range, status, process, index)
 
         // const val = msg.i
         // console.log(val)
